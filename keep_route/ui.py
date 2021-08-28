@@ -9,6 +9,10 @@ import config
 
 import threading
 
+import logging
+logger = logging.getLogger('keepRoute')
+
+
 # https://github.com/PySimpleGUI
 # https://pysimplegui.readthedocs.io/en/latest/call%20reference/
 
@@ -54,7 +58,7 @@ class UITray(object):
 
         while True:
             event, values = dummy.read()
-            print(f'event:{event}, values:{values}')
+            logger.debug(f'event:{event}, values:{values}')
 
             if event == tray.key:
                 event = values[0]
@@ -155,7 +159,7 @@ class UIConfig(object):
 
         while True:
             event, values = window.read()
-            print(f'event:{event}, values:{values}')
+            logger.debug(f'event:{event}, values:{values}')
 
             if event in (sg.WIN_CLOSED, 'Exit', 'Cancel'):
                 break
@@ -215,7 +219,7 @@ class UIRoute(object):
 
         while True:
             event, values = window.read()
-            print(f'event:{event}, values:{values}')
+            logger.debug(f'event:{event}, values:{values}')
 
             if event in (sg.WIN_CLOSED, 'Cancel'):
                 break
@@ -249,6 +253,7 @@ class UIAbout(object):
 
         while True:
             event, values = window.read()
+            logger.debug(f'event:{event}, values:{values}')
 
             if event in ('Help'):
                 Util.open_home()
@@ -259,26 +264,7 @@ class UIAbout(object):
 
         window.close()
 
-# For debug
-'''
-from ui import UIDialog
-UIDialog.show(f"text:{text}")
-'''
-class UIDialog(object):
-    @classmethod
-    def show(cls, text):
-        layout = [
-            [sg.Text(text)],
-            [sg.Button('OK')]
-        ]
-
-        window = sg.Window('Dialog', layout, size=(1024, 1024), finalize=True, resizable=True, icon=ICON_ENABLED)
-        while True:
-            event, values = window.read()
-
-            if event in (sg.WIN_CLOSED, 'OK'):
-                break
-
+# For Debug
 if __name__ == '__main__':
     t = UITray.start()
     t.join()
