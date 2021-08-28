@@ -7,6 +7,8 @@ from route import Route
 from route import RouteFactory
 from ui import UITray
 import config
+import logging
+import logging.config
 
 def main():
 
@@ -25,8 +27,8 @@ def main():
                     current_route = RouteFactory.create(
                         Util.dict_filter(before, Route.WIN_HEADER, Route.ROUTE_HEADER))
                     needs_exec = Route.is_diff(route, current_route[0])
-                    print(f'current: {current_route}')
-                    print(f'needs_exec: {needs_exec}')
+                    logger.debug(f'current: {current_route}')
+                    logger.debug(f'needs_exec: {needs_exec}')
 
                     if needs_exec:
                         # https://docs.microsoft.com/en-us/powershell/module/nettcpip/remove-netroute
@@ -38,13 +40,20 @@ def main():
                         # https://docs.microsoft.com/en-us/powershell/module/nettcpip/get-netroute
                         after = Util.run_ps_command(f'Get-NetRoute "{route.net_addr}" | ConvertTo-Json')
                         current_route = Util.dict_filter(after, Route.WIN_HEADER, Route.ROUTE_HEADER)
-                        print(f'current: {current_route}')
+                        logger.debug(f'current: {current_route}')
 
         except:
-            print('error')
+            logger.info('error')
         finally:
             time.sleep(int(options["interval_sec"]))
 
 if __name__ == "__main__":
 
-    main()
+    logger = logging.getLogger('keepRoute')
+    logger.debug(f"Starting keep-route ver.{Util.version}")
+
+    try:
+        main()
+    except:
+        import traceback
+        logger.error(traceback.extract_stack())

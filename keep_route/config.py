@@ -7,9 +7,16 @@ from pathlib import Path
 from route import RouteFactory
 from threading import Lock
 
+import logging
+import logging.config as log_conf
+
+logger = logging.getLogger('keepRoute')
+
 APP_DIR = os.getenv('APPDATA')
 ROUTE_FILE = os.path.join(APP_DIR, 'keep-route', 'route.json')
 OPTION_FILE = os.path.join(APP_DIR, 'keep-route', 'option.json')
+LOG_CONFIG = os.path.join(APP_DIR, 'keep-route', 'logging.conf')
+LOG_FILE = os.path.join(APP_DIR, 'keep-route', 'keep-route.log')
 
 DEFAULT_OPTIONS = {
     "interval_sec": 60,
@@ -18,6 +25,9 @@ DEFAULT_OPTIONS = {
 os.makedirs(os.path.join(APP_DIR, 'keep-route'), exist_ok=True)
 
 lock = Lock()
+
+if Path(LOG_CONFIG).is_file():
+    log_conf.fileConfig(LOG_CONFIG)
 
 def routes():
 
